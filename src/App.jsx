@@ -1,6 +1,8 @@
 import "./App.css";
+import { useState, useEffect } from "react";
 
 function App() {
+  const [activeSection, setActiveSection] = useState("intro");
 
   const sections = [
     { id: "intro", label: "Introduction" },
@@ -11,83 +13,121 @@ function App() {
     { id: "best-practices", label: "Best Practices & Tips" },
   ];
 
+  const resources = [
+    { name: "Omniroute", url: "https://omniroute.ai" },
+    { name: "Claude AI", url: "https://claude.ai" },
+    { name: "Kilo Code", url: "https://kilo.ai/" },
+    { name: "OpenRouter", url: "https://openrouter.ai" },
+    { name: "NVIDIA NIM", url: "https://build.nvidia.com" },
+  ];
+
+  // Track active section on scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    sections.forEach((section) => {
+      const element = document.getElementById(section.id);
+      if (element) observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">
-            AI Context Engineering Guide
-          </h1>
+    <div className="min-h-screen bg-white">
+      {/* Header - MDN style */}
+      <header className="bg-gray-900 text-white sticky top-0 z-50 border-b-4 border-blue-500">
+        <div className="max-w-[1440px] mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold">
+              AI Context Engineering
+            </h1>
+            <span className="text-blue-400 text-sm">A Practical Guide</span>
+          </div>
           <a
             href="https://github.com/ferhatdaoud/AI-Context-Engineering-A-Practical-Guide"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors"
           >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-            </svg>
-            View on GitHub
+            GitHub
           </a>
         </div>
       </header>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-73px)] sticky top-[73px] overflow-y-auto">
-          <nav className="p-6 space-y-1">
-            {sections.map((section) => (
-              <a
-                key={section.id}
-                href={`#${section.id}`}
-                className="block px-3 py-2 rounded-lg transition-colors text-gray-700 hover:bg-gray-100 hover:text-blue-700"
-              >
-                {section.label}
-              </a>
-            ))}
+      <div className="flex max-w-[1440px] mx-auto">
+        {/* Left Sidebar - Navigation */}
+        <aside className="w-64 border-r border-gray-200 bg-gray-50 min-h-screen">
+          <nav className="sticky top-20 p-6">
+            <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">
+              Contents
+            </h2>
+            <ul className="space-y-1">
+              {sections.map((section) => (
+                <li key={section.id}>
+                  <a
+                    href={`#${section.id}`}
+                    className={`block px-3 py-2 rounded text-sm transition-colors ${
+                      activeSection === section.id
+                        ? "bg-blue-100 text-blue-700 font-medium"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    {section.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </nav>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 max-w-4xl mx-auto px-8 py-12">
+        <main className="flex-1 px-12 py-8 max-w-[900px]">
           {/* Introduction */}
-          <section id="intro" className="mb-20 scroll-mt-24">
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">
+          <section id="intro" className="mb-16 scroll-mt-20">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-gray-200">
               What is AI Context Engineering?
             </h2>
-            <div className="prose prose-lg text-gray-600 space-y-4">
-              <p className="leading-relaxed">
+            <div className="prose prose-lg max-w-none">
+              <p className="text-lg text-gray-700 leading-relaxed mb-4">
                 I've been coding for a little over a year as a self-taught developer, and like most people getting started,
                 I leaned heavily on tools like ChatGPT, Gemini, and Claude Chat to learn and debug. But honestly, it started
                 getting super frustrating.
               </p>
-              <p className="leading-relaxed">
+              <p className="text-gray-700 leading-relaxed mb-4">
                 I'm the kind of person who always wants to optimize how I learn. The breaking point for me was working on
                 complex features. When you're trying to debug a flow that touches five different files, copying and pasting
                 all that code into a web chat just isn't practical. The chat gets laggy, the context gets lost, and the AI
                 starts to hallucinate. I remember thinking, <em>"There has to be a better way than this copy-paste dance."</em>
               </p>
-              <p className="leading-relaxed">
+              <p className="text-gray-700 leading-relaxed mb-4">
                 A few months ago (around June 2026), I started researching alternatives and discovered IDE-integrated AI tools.
-                I tried several—Windsurf, Copilot, Continue—before landing on Kilo Code. It was exactly what I needed: an AI
-                that was actually <strong>inside</strong> my environment, could see how my files connected, and could explain
+                I tried several—Windsurf, Copilot, Continue—before landing on <strong>Kilo Code</strong>. It was exactly what I needed: an AI
+                that was actually inside my environment, could see how my files connected, and could explain
                 the data flow right there in the editor.
               </p>
-              <p className="leading-relaxed">
-                But my real "aha" moment happened just two days ago. I got curious about how these AI IDEs actually work under
-                the hood, which led me down a rabbit hole where I discovered <strong>Omniroute</strong>.
-              </p>
-              <p className="leading-relaxed">
-                The concept blew my mind: what if you could take the power of multiple AI providers, link them together into a
-                single, powerful "combo," and use that to run Kilo Code or Claude CLI directly in your VS Code terminal?
-              </p>
-              <p className="leading-relaxed">
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-6">
+                <p className="text-blue-900 font-medium">💡 The "Aha" Moment</p>
+                <p className="text-blue-800 text-sm mt-2">
+                  My real breakthrough happened just two days ago when I discovered <strong>Omniroute</strong> — a way to chain
+                  multiple AI providers together into one powerful combo, giving you access to 1.6 billion free tokens daily.
+                </p>
+              </div>
+              <p className="text-gray-700 leading-relaxed mb-4">
                 I immediately started testing the workflow on my portfolio site. The difference was night and day. Instead of
                 spending hours manually coding a new design just to see if I liked it, I was testing and iterating design
                 ideas on the spot and pushing directly to GitHub.
               </p>
-              <p className="leading-relaxed">
+              <p className="text-gray-700 leading-relaxed">
                 This documentation site is my living journal. I'm building it right now using the exact workflow I'm writing about.
                 The goal isn't to be an "expert" with years of experience—it's to show you what's possible when you stop
                 copy-pasting code into chat windows and start setting up your projects so AI actually understands them.
@@ -496,17 +536,17 @@ If you just hand me code, I won't retain it. Make me work for it.
                   <tbody className="bg-white divide-y divide-gray-200">
                     <tr>
                       <td className="px-6 py-4 text-sm text-gray-900">Apply new theme</td>
-                      <td className="px-6 py-4 text-sm text-red-600">3-4 hours</td>
+                      <td className="px-6 py-4 text-sm text-red-600">1-2 hours</td>
                       <td className="px-6 py-4 text-sm text-green-600 font-semibold">30 seconds</td>
                     </tr>
                     <tr>
-                      <td className="px-6 py-4 text-sm text-gray-900">Test 3 different themes</td>
-                      <td className="px-6 py-4 text-sm text-red-600">10-12 hours</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">Test few different themes</td>
+                      <td className="px-6 py-4 text-sm text-red-600">2-3 hours</td>
                       <td className="px-6 py-4 text-sm text-green-600 font-semibold">2 minutes</td>
                     </tr>
                     <tr>
                       <td className="px-6 py-4 text-sm text-gray-900">Debug a typo in database query</td>
-                      <td className="px-6 py-4 text-sm text-red-600">2-3 hours (if you're lucky)</td>
+                      <td className="px-6 py-4 text-sm text-red-600">1-3 hours (if you're lucky)</td>
                       <td className="px-6 py-4 text-sm text-green-600 font-semibold">Instant (AI spots it)</td>
                     </tr>
                   </tbody>
@@ -675,6 +715,85 @@ If you just hand me code, I won't retain it. Make me work for it.
             </p>
           </footer>
         </main>
+
+        {/* Right Sidebar - TOC & Resources */}
+        <aside className="w-80 border-l border-gray-200 bg-gray-50 min-h-screen sticky top-20 self-start">
+          <div className="p-6">
+            {/* On This Page */}
+            <div className="mb-8">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">
+                On This Page
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a href="#intro" className="text-blue-600 hover:text-blue-800 hover:underline">
+                    What is AI Context Engineering?
+                  </a>
+                </li>
+                <li>
+                  <a href="#omniroute" className="text-blue-600 hover:text-blue-800 hover:underline">
+                    Setting Up Omniroute
+                  </a>
+                </li>
+                <li>
+                  <a href="#context-files" className="text-blue-600 hover:text-blue-800 hover:underline">
+                    Writing Context Files
+                  </a>
+                </li>
+                <li>
+                  <a href="#integration" className="text-blue-600 hover:text-blue-800 hover:underline">
+                    Claude Code Integration
+                  </a>
+                </li>
+                <li>
+                  <a href="#examples" className="text-blue-600 hover:text-blue-800 hover:underline">
+                    Real-World Examples
+                  </a>
+                </li>
+                <li>
+                  <a href="#best-practices" className="text-blue-600 hover:text-blue-800 hover:underline">
+                    Best Practices & Tips
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Related Resources */}
+            <div>
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">
+                Related Resources
+              </h3>
+              <ul className="space-y-3">
+                {resources.map((resource) => (
+                  <li key={resource.name}>
+                    <a
+                      href={resource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      {resource.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded">
+                <p className="text-xs font-semibold text-blue-900 mb-2">📚 Quick Start</p>
+                <p className="text-xs text-blue-800 leading-relaxed">
+                  New to AI-powered development? Start with the{" "}
+                  <a href="#omniroute" className="underline font-medium">
+                    Omniroute setup guide
+                  </a>{" "}
+                  to get free access to powerful AI models.
+                </p>
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );
